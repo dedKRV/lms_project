@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация | LMS{% endblock %}
+
+{% block content %}
+<h2>Регистрация</h2>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form class="form" method="POST">
+    {{ form.hidden_tag() }}
+
+    <label>Имя</label>
+    {{ form.name(placeholder="Введите полное имя") }}
+
+    <label>Email</label>
+    {{ form.email(placeholder="Введите email") }}
+
+    <label>Пароль</label>
+    {{ form.password(placeholder="Придумайте пароль") }}
+
+    <label>Роль</label>
+    {{ form.role() }}
+
+    {{ form.submit(class="btn primary-btn") }}
+</form>
+
+<p style="margin-top: 20px;">
+    Уже есть аккаунт? <a href="/login">Войдите</a>
+</p>
+{% endblock %}

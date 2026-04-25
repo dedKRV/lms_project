@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Детали курса{% endblock %}
+
+{% block content %}
+<h2>{{ course.title }}</h2>
+
+<p><strong>Описание:</strong></p>
+<p>{{ course.description }}</p>
+
+<p>
+    <strong>Преподаватель:</strong>
+    {{ course.teacher.name }}
+</p>
+
+<hr>
+
+{% if current_user.role == "student" %}
+    {% if enrolled %}
+        <p><em>Вы записаны на этот курс.</em></p>
+
+        <a href="/unenroll/{{ course.id }}"
+           class="btn btn-danger"
+           onclick="return confirm('Вы уверены что хотите отписаться?');">
+           Отписаться
+        </a>
+    {% else %}
+        <a href="/enroll/{{ course.id }}" class="btn btn-primary">
+            Записаться на курс
+        </a>
+    {% endif %}
+{% endif %}
+
+<hr>
+
+<h3>Уроки</h3>
+
+{% if current_user.role == "teacher" or enrolled %}
+
+    {% if course.lessons %}
+    <div class="grid">
+        {% for lesson in course.lessons %}
+        <div class="card">
+            <h4>
+                <a href="/lesson/{{ lesson.id }}">{{ lesson.title }}</a>
+            </h4>
+            <p>{{ lesson.content[:100] }}{% if lesson.content|length > 100 %}...{% endif %}</p>
+
+            {% if current_user.role == "teacher" %}
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <a href="/teacher/lesson/{{ lesson.id }}/edit"
+                   class="btn btn-secondary">
+                    Редактировать
+                </a>
+
+                <a href="/teacher/lesson/{{ lesson.id }}/delete"
+                   class="btn btn-danger"
+                   onclick="return confirm('Удалить этот урок?');">
+                    Удалить
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>Уроки пока не добавлены.</p>
+    {% endif %}
+
+    {% if current_user.role == "teacher" %}
+        <br>
+        <a href="/teacher/course/{{ course.id }}/lesson/add"
+           class="btn btn-primary">
+            + Добавить урок
+        </a>
+    {% endif %}
+
+{% else %}
+    <p><em>Запишитесь на курс чтобы просматривать уроки.</em></p>
+{% endif %}
+
+{% endblock %}

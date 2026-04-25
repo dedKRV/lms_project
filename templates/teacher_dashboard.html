@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Панель преподавателя{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Панель преподавателя</h1>
+    <p>С возвращением, {{ user_name }}</p>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Управление курсами</h3>
+        <p>Создавайте, редактируйте и организуйте свои курсы.</p>
+        <a href="/teacher/courses" class="btn primary-btn">
+            Перейти к курсам
+        </a>
+    </div>
+
+    <div class="card">
+        <h3>Уроки и файлы</h3>
+        <p>Добавляйте уроки с текстом и загружайте файлы.</p>
+        <span class="badge">Внутри курсов</span>
+    </div>
+</div>
+{% endblock %}

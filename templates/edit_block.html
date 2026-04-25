@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать блок{% endblock %}
+
+{% block content %}
+<h2>Редактировать блок</h2>
+
+<form class="form" method="POST" enctype="multipart/form-data">
+    <label>Название блока</label>
+    <input type="text" name="title" value="{{ block.title }}" required>
+
+    <label>Содержание</label>
+    <textarea name="content" rows="10" required>{{ block.content }}</textarea>
+
+    <label>Загрузить новые изображения</label>
+    <input type="file" name="images" multiple accept="image/*">
+
+    {% if images %}
+    <div style="margin: 15px 0;">
+        <strong>Текущие изображения:</strong>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            {% for img in images %}
+            <div>
+                <img src="/uploads/{{ img.filename }}" style="max-width: 150px;">
+                <br>
+                <a href="/teacher/image/{{ img.id }}/delete" class="btn danger-btn" style="padding: 2px 8px;" onclick="return confirm('Удалить?')">Удалить</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <button type="submit">Сохранить</button>
+</form>
+
+<br>
+<a href="/block/{{ block.id }}">Назад к блоку</a>
+{% endblock %}

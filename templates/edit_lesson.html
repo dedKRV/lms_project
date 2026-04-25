@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать урок{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Редактировать урок</h2>
+    <div style="display: flex; gap: 10px;">
+        <a href="/teacher/lesson/{{ lesson.id }}/block/add/textbook" class="btn primary-btn">+ Учебник</a>
+        <a href="/teacher/lesson/{{ lesson.id }}/block/add/assignment" class="btn primary-btn">+ Задание</a>
+    </div>
+</div>
+
+<form class="form" method="POST">
+    <label>Название урока</label>
+    <input type="text" name="title" value="{{ lesson.title }}" required>
+
+    <label>Содержание урока</label>
+    <textarea name="content" rows="6" required>{{ lesson.content }}</textarea>
+
+    <button type="submit">Обновить урок</button>
+</form>
+
+<br>
+<a href="/lesson/{{ lesson.id }}">← Просмотр урока</a>
+<br>
+<a href="/course/{{ lesson.course_id }}">← Назад к курсу</a>
+{% endblock %}

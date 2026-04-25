@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Уведомления{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Уведомления</h2>
+    {% if notifications %}
+    <a href="/notifications/delete-all" class="btn danger-btn" onclick="return confirm('Удалить все уведомления?')">Удалить все</a>
+    {% endif %}
+</div>
+
+{% if notifications %}
+    {% for notif in notifications %}
+    <div class="card" style="margin-bottom: 15px; {% if not notif.is_read %}border-left: 4px solid #4caf50;{% endif %}">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+                <p style="margin: 0; {% if not notif.is_read %}font-weight: bold;{% endif %}">{{ notif.text }}</p>
+                <small style="color: #888;">{{ notif.created_at.strftime('%d.%m.%Y в %H:%M') }}</small>
+            </div>
+            {% if notif.link %}
+            <a href="/notifications/read/{{ notif.id }}" class="btn primary-btn">Перейти</a>
+            {% else %}
+            <a href="/notifications/read/{{ notif.id }}" class="btn secondary-btn">Прочитано</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty-text">У вас нет уведомлений</p>
+{% endif %}
+{% endblock %}

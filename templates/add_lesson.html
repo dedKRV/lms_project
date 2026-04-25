@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить урок{% endblock %}
+
+{% block content %}
+<h2>Добавить урок</h2>
+
+<form class="form" method="POST" enctype="multipart/form-data">
+    <label>Название урока</label>
+    <input type="text" name="title" required>
+
+    <label>Содержание урока</label>
+    <textarea name="content" rows="6" required></textarea>
+
+    <label>Загрузить файл (PDF / DOC)</label>
+    <input type="file" name="file">
+
+    <button type="submit">Добавить урок</button>
+</form>
+
+<br>
+<a href="/course/{{ course.id }}">← Назад к курсу</a>
+{% endblock %}

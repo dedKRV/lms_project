@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Вход | LMS{% endblock %}
+
+{% block content %}
+<h2>Вход в систему</h2>
+
+{% if message %}
+    <div class="flash">{{ message }}</div>
+{% endif %}
+
+<form class="form" method="POST">
+    {{ form.hidden_tag() }}
+
+    <label>{{ form.email.label }}</label><br>
+    {{ form.email(class="form-control", placeholder="Введите email") }}<br><br>
+
+    <label>{{ form.password.label }}</label><br>
+    {{ form.password(class="form-control", placeholder="Введите пароль") }}<br><br>
+
+    <div style="margin-bottom: 15px;">
+        {{ form.remember_me() }} {{ form.remember_me.label }}
+    </div>
+
+    {{ form.submit(class="btn primary-btn") }}
+</form>
+
+<p style="margin-top: 20px;">
+    Нет аккаунта? <a href="/register">Зарегистрируйтесь</a>
+</p>
+{% endblock %}

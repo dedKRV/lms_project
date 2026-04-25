@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}LMS{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">LMS</a>
+
+            <a href="/" class="nav-link">Главная</a>
+
+            {% if current_user.is_authenticated %}
+                <a href="/dashboard" class="nav-link">Панель</a>
+
+                {% if current_user.role == "student" %}
+                    <a href="/courses" class="nav-link">Курсы</a>
+                {% endif %}
+
+                {% if current_user.role == "teacher" %}
+                    <a href="/teacher/courses" class="nav-link">Управление</a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+                <a href="/notifications" class="nav-link" style="position: relative;">
+                    Уведомления
+                    <span id="notif-count" style="display: none; position: absolute; top: -5px; right: -5px; background: #f44336; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; min-width: 18px; text-align: center;">0</span>
+                </a>
+                <span class="user-chip">
+                    {{ current_user.name }}
+                </span>
+                <a href="/logout" class="btn logout-btn">Выйти</a>
+            {% else %}
+                {% if not hide_nav_auth %}
+                    <a href="/login" class="btn ghost-btn">Вход</a>
+                    <a href="/register" class="btn primary-btn">Регистрация</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <script>
+    function updateNotifications() {
+        fetch('/api/notifications/count')
+            .then(response => response.json())
+            .then(data => {
+                var badge = document.getElementById('notif-count');
+                if (data.count > 0) {
+                    badge.style.display = 'block';
+                    badge.textContent = data.count;
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+    }
+
+    updateNotifications();
+    setInterval(updateNotifications, 30000);
+    </script>
+    {% endif %}
+
+</body>
+</html>

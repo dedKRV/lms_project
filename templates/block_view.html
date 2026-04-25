@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>{{ block.title }}</h2>
+    <span class="badge">{{ 'Учебный материал' if block.block_type == 'textbook' else 'Задание' }}</span>
+</div>
+
+<div class="card" style="margin-bottom: 25px;">
+    <div style="line-height: 1.8;">
+        {{ block.content|safe }}
+    </div>
+
+    {% if images %}
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+        {% for img in images %}
+        <img src="/uploads/{{ img.filename }}" style="max-width: 100%; border-radius: 5px; border: 1px solid #ddd;">
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% if block.block_type == 'assignment' %}
+    <hr style="margin: 30px 0;">
+
+    {% if current_user.role == "student" %}
+        <h3>Ваше решение</h3>
+
+        <form method="POST" action="/lesson/{{ block.lesson_id }}/block/{{ block.id }}/submit" style="margin-bottom: 30px;">
+            <div style="position: relative;">
+                <textarea name="code" id="code-editor" rows="15" style="width: 100%; font-family: 'Courier New', monospace; padding: 15px; border: 2px solid #4caf50; border-radius: 5px; font-size: 14px; background: #1e1e1e; color: #d4d4d4;" placeholder="// Введите ваш код здесь..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button type="submit" name="action" value="draft" class="btn secondary-btn">Сохранить черновик</button>
+                <button type="submit" name="action" value="submit" class="btn primary-btn">Отправить на проверку</button>
+            </div>
+        </form>
+
+        {% if submissions %}
+        <h3>История решений</h3>
+        {% for submission in submissions %}
+        <div class="card" style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <small>{{ submission.submitted_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                <span class="badge">{{ 'Черновик' if submission.status == 'draft' else 'Отправлено' }}</span>
+            </div>
+
+            <div style="position: relative;">
+                <pre class="code-block" style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto; max-height: 300px;">{{ submission.code }}</pre>
+                <button onclick="copyCode(this)" data-code="{{ submission.code }}" class="btn secondary-btn" style="position: absolute; top: 5px; right: 5px; padding: 5px 10px; font-size: 12px;">Копировать</button>
+            </div>
+
+            {% if submission.status == 'submit' %}
+            <button onclick="checkCodeAI({{ submission.id }}, this)" class="btn secondary-btn" style="margin-top: 5px;">Проверить нейросетью</button>
+            <div class="ai-result" style="display: none; margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 5px; max-height: 200px; overflow-y: auto;"></div>
+            {% endif %}
+
+            {% if submission.score is not none %}
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                <strong>Оценка: {{ submission.score }}/100</strong>
+                {% if submission.feedback %}
+                <p style="margin-top: 10px;"><strong>Комментарий преподавателя:</strong></p>
+                <p>{{ submission.feedback }}</p>
+                {% endif %}
+                <small>Проверено: {{ submission.graded_at.strftime('%d.%m.%Y %H:%M') }}</small>
+            </div>
+            {% elif submission.status == 'submit' %}
+            <p style="color: #ff9800; margin-top: 10px;">Ожидает проверки</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+    {% endif %}
+
+    {% if current_user.role == "teacher" %}
+        <h3>Решения студентов</h3>
+
+        {% if submissions %}
+            {% set students = {} %}
+            {% for sub in submissions %}
+                {% if sub.student_id not in students %}
+                    {% set _ = students.update({sub.student_id: {'name': sub.student_name, 'email': sub.student_email, 'submissions': []}}) %}
+                {% endif %}
+                {% set _ = students[sub.student_id]['submissions'].append(sub) %}
+            {% endfor %}
+
+            {% for student_id, data in students.items() %}
+            <div class="card" style="margin-bottom: 20px;">
+                <h4>
+                    <a href="/submission/{{ data.submissions[0].id }}" style="color: #2e7d32; text-decoration: none;">
+                        {{ data.name }}
+                    </a>
+                    <span style="color: #888; font-weight: normal;">({{ data.email }})</span>
+                </h4>
+
+                {% for submission in data.submissions %}
+                <div style="background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid {% if submission.status == 'draft' %}#9e9e9e{% elif submission.score is not none %}#4caf50{% else %}#ff9800{% endif %};">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <small>{{ submission.submitted_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                        <span class="badge">{{ 'Черновик' if submission.status == 'draft' else 'На проверке' }}</span>
+                    </div>
+
+                    <div style="position: relative;">
+                        <pre class="code-block" style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto; max-height: 200px;">{{ submission.code[:500] }}{% if submission.code|length > 500 %}...{% endif %}</pre>
+                        <button onclick="copyCode(this)" data-code="{{ submission.code }}" class="btn secondary-btn" style="position: absolute; top: 5px; right: 5px; padding: 5px 10px; font-size: 12px;">Копировать</button>
+                    </div>
+
+                    <a href="/submission/{{ submission.id }}" class="btn secondary-btn" style="margin-top: 10px;">Открыть полностью</a>
+
+                    {% if submission.status == 'submit' %}
+                    <button onclick="checkCodeAI({{ submission.id }}, this)" class="btn secondary-btn" style="margin-top: 5px; margin-left: 5px;">Проверить нейросетью</button>
+                    <div class="ai-result" style="display: none; margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 5px; max-height: 200px; overflow-y: auto;"></div>
+                    {% endif %}
+
+                    {% if submission.score is not none %}
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px;">
+                        <strong>Оценка: {{ submission.score }}/100</strong>
+                    </div>
+                    {% endif %}
+
+                    {% if submission.status == 'submit' and submission.score is none %}
+                    <form method="POST" action="/teacher/submission/{{ submission.id }}/grade" style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                            <label>Оценка (0-100):</label>
+                            <input type="number" name="score" min="0" max="100" required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; width: 100px;">
+                        </div>
+                        <textarea name="feedback" rows="2" placeholder="Комментарий" style="width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                        <button type="submit" class="btn primary-btn">Выставить оценку</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        {% else %}
+        <p>Пока нет решений</p>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<br>
+<a href="/lesson/{{ block.lesson_id }}">Назад к уроку</a>
+
+<script>
+function copyCode(button) {
+    var code = button.getAttribute('data-code');
+    navigator.clipboard.writeText(code).then(function() {
+        button.textContent = 'Скопировано!';
+        setTimeout(function() {
+            button.textContent = 'Копировать';
+        }, 2000);
+    });
+}
+
+function checkCodeAI(submissionId, button) {
+    var resultDiv = button.nextElementSibling;
+
+    button.disabled = true;
+    button.textContent = 'Проверка...';
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<p style="color: #888;">Загрузка...</p>';
+
+    fetch('/submission/' + submissionId + '/check', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            resultDiv.innerHTML = '<p style="color: #f44336;">Ошибка: ' + data.error + '</p>';
+        } else {
+            resultDiv.innerHTML = '<pre style="white-space: pre-wrap; word-wrap: break-word;">' + data.response + '</pre>';
+        }
+        button.disabled = false;
+        button.textContent = 'Проверить нейросетью';
+    })
+    .catch(error => {
+        resultDiv.innerHTML = '<p style="color: #f44336;">Ошибка соединения</p>';
+        button.disabled = false;
+        button.textContent = 'Проверить нейросетью';
+    });
+}
+</script>
+
+<style>
+    .code-block {
+        tab-size: 4;
+        -moz-tab-size: 4;
+    }
+    #code-editor {
+        tab-size: 4;
+        -moz-tab-size: 4;
+    }
+</style>
+{% endblock %}

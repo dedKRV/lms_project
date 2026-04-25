@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Все курсы{% endblock %}
+
+{% block content %}
+<h2 class="page-title">Доступные курсы</h2>
+
+<div class="courses-grid">
+    {% for course in courses %}
+        <div class="course-card">
+            <h3 class="course-title">
+                <a href="/course/{{ course.id }}">
+                    {{ course.title }}
+                </a>
+            </h3>
+
+            <p class="course-desc">
+                {{ course.description }}
+            </p>
+
+            {% if course.id in enrolled_course_ids %}
+                <span class="badge enrolled">Записаны</span>
+            {% else %}
+                <a class="btn enroll-btn" href="/enroll/{{ course.id }}">
+                    Записаться
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Нет доступных курсов.</p>
+    {% endfor %}
+</div>
+{% endblock %}

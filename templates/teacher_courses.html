@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Управление курсами{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h2>Ваши курсы</h2>
+    <a href="/teacher/create-course" class="btn btn-primary">
+        + Создать курс
+    </a>
+</div>
+
+{% if courses %}
+<div class="grid">
+    {% for course in courses %}
+    <div class="card">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description }}</p>
+
+        <div style="margin-top:15px; display:flex; gap:10px;">
+            <a href="/course/{{ course.id }}" class="btn btn-secondary">
+                Просмотр
+            </a>
+
+            <a href="/teacher/course/{{ course.id }}/edit" class="btn btn-primary">
+                Изменить
+            </a>
+
+            <a href="/teacher/course/{{ course.id }}/delete"
+               class="btn btn-danger"
+               onclick="return confirm('Удалить этот курс?');">
+                Удалить
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Пока нет курсов.</p>
+{% endif %}
+
+{% endblock %}

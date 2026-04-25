@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить блок{% endblock %}
+
+{% block content %}
+<h2>{% if block_type == 'textbook' %}Добавить учебный материал{% else %}Добавить задание{% endif %}</h2>
+
+<form class="form" method="POST" enctype="multipart/form-data">
+    <label>Название блока</label>
+    <input type="text" name="title" required>
+
+    <label>Содержание</label>
+    <textarea name="content" rows="10" required></textarea>
+
+    <label>Загрузить изображения</label>
+    <input type="file" name="images" multiple accept="image/*">
+
+    <button type="submit">Добавить</button>
+</form>
+
+<br>
+<a href="/lesson/{{ lesson.id }}">← Назад к уроку</a>
+{% endblock %}

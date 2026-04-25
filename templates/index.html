@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Главная | LMS{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+    <h1>
+        Система управления обучением
+    </h1>
+
+    <p class="hero-subtitle">
+        Современная академическая LMS для студентов и преподавателей.
+        <br>
+        Управляйте курсами, уроками и обучением в одном месте.
+    </p>
+
+    {% if not current_user.is_authenticated %}
+        <div class="hero-actions">
+            <a href="/register" class="btn primary-btn">Начать</a>
+            <a href="/login" class="btn secondary-btn">Войти</a>
+        </div>
+    {% else %}
+        <div class="hero-actions">
+            <a href="/dashboard" class="btn primary-btn">Перейти к панели</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>Управление курсами</h3>
+        <p>
+            Преподаватели могут легко создавать, редактировать и управлять курсами.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Уроки и файлы</h3>
+        <p>
+            Добавляйте уроки с текстом и загружайте PDF, документы или изображения.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Зачисление студентов</h3>
+        <p>
+            Студенты могут записываться, отписываться и отслеживать свое обучение.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Разграничение ролей</h3>
+        <p>
+            Отдельные панели и права доступа для студентов и преподавателей.
+        </p>
+    </div>
+</div>
+
+{% endblock %}
