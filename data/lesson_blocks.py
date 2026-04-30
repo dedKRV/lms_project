@@ -13,6 +13,7 @@ class LessonBlock(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.Text)
     order = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
 
-    lesson = orm.relationship("Lesson", backref="lesson_blocks_ref")
-    images = orm.relationship("BlockImage", cascade="all, delete-orphan")
-    submissions = orm.relationship("Submission", cascade="all, delete-orphan")
+    lesson = orm.relationship("Lesson", back_populates="blocks")
+    images = orm.relationship("BlockImage", back_populates="block", cascade="all, delete-orphan")
+    files = orm.relationship("BlockFile", back_populates="block", cascade="all, delete-orphan")
+    submissions = orm.relationship("Submission", back_populates="block", cascade="all, delete-orphan")

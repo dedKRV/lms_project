@@ -17,12 +17,12 @@
 
     {% if not current_user.is_authenticated %}
         <div class="hero-actions">
-            <a href="/register" class="btn primary-btn">Начать</a>
-            <a href="/login" class="btn secondary-btn">Войти</a>
+            <a href="/register" class="btn btn-success btn-lg">Начать</a>
+            <a href="/login" class="btn btn-outline-secondary btn-lg">Войти</a>
         </div>
     {% else %}
         <div class="hero-actions">
-            <a href="/dashboard" class="btn primary-btn">Перейти к панели</a>
+            <a href="/dashboard" class="btn btn-success btn-lg">Перейти к панели</a>
         </div>
     {% endif %}
 </div>

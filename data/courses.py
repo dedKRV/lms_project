@@ -11,6 +11,6 @@ class Course(SqlAlchemyBase):
     description = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     teacher_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=False)
 
-    teacher = orm.relationship("User", backref="courses")
-    lessons = orm.relationship("Lesson", cascade="all, delete-orphan")
-    enrollments = orm.relationship("Enrollment", cascade="all, delete-orphan")
+    teacher = orm.relationship("User", back_populates="courses")
+    lessons = orm.relationship("Lesson", back_populates="course", cascade="all, delete-orphan")
+    enrollments = orm.relationship("Enrollment", back_populates="course", cascade="all, delete-orphan")

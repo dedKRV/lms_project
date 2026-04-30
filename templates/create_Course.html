@@ -3,15 +3,24 @@
 {% block title %}Создать курс{% endblock %}
 
 {% block content %}
-<h2>Создать новый курс</h2>
-
-<form class="form" method="POST">
-    <label>Название курса</label><br>
-    <input type="text" name="title" required><br><br>
-
-    <label>Описание</label><br>
-    <textarea name="description" rows="4" required></textarea><br><br>
-
-    <button type="submit">Создать курс</button>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Создать новый курс</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Название курса</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Описание</label>
+                        <textarea name="description" rows="4" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Создать курс</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

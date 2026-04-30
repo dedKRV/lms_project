@@ -17,5 +17,5 @@ class Submission(SqlAlchemyBase):
     submitted_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     graded_at = sqlalchemy.Column(sqlalchemy.DateTime)
 
-    block = orm.relationship("LessonBlock", backref="submissions_ref")
-    student = orm.relationship("User", backref="submissions")
+    block = orm.relationship("LessonBlock", back_populates="submissions")
+    student = orm.relationship("User", back_populates="submissions")

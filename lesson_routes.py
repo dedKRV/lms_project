@@ -15,7 +15,7 @@ def init_lesson_routes(app):
     @teacher_required
     def add_lesson(course_id):
         db_sess = db_session.create_session()
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
 
         if not course:
             db_sess.close()
@@ -47,7 +47,7 @@ def init_lesson_routes(app):
     @teacher_required
     def edit_lesson(lesson_id):
         db_sess = db_session.create_session()
-        lesson = db_sess.query(Lesson).get(lesson_id)
+        lesson = db_sess.get(Lesson, lesson_id)
 
         if not lesson:
             db_sess.close()
@@ -55,7 +55,7 @@ def init_lesson_routes(app):
 
         course_id = lesson.course_id
 
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
         if course.teacher_id != current_user.id:
             db_sess.close()
             flash("Доступ запрещен")
@@ -83,7 +83,7 @@ def init_lesson_routes(app):
     @teacher_required
     def delete_lesson(lesson_id):
         db_sess = db_session.create_session()
-        lesson = db_sess.query(Lesson).get(lesson_id)
+        lesson = db_sess.get(Lesson, lesson_id)
 
         if not lesson:
             db_sess.close()

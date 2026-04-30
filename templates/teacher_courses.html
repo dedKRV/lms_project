@@ -3,40 +3,44 @@
 
 {% block content %}
 
-<div class="page-header">
-    <h2>Ваши курсы</h2>
-    <a href="/teacher/create-course" class="btn btn-primary">
-        + Создать курс
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Ваши курсы</h2>
+    <a href="/teacher/create-course" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Создать курс
     </a>
 </div>
 
 {% if courses %}
-<div class="grid">
+<div class="row">
     {% for course in courses %}
-    <div class="card">
-        <h3>{{ course.title }}</h3>
-        <p>{{ course.description }}</p>
-
-        <div style="margin-top:15px; display:flex; gap:10px;">
-            <a href="/course/{{ course.id }}" class="btn btn-secondary">
-                Просмотр
-            </a>
-
-            <a href="/teacher/course/{{ course.id }}/edit" class="btn btn-primary">
-                Изменить
-            </a>
-
-            <a href="/teacher/course/{{ course.id }}/delete"
-               class="btn btn-danger"
-               onclick="return confirm('Удалить этот курс?');">
-                Удалить
-            </a>
+    <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ course.title }}</h5>
+                <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
+                <div class="d-flex flex-wrap gap-1 mt-3">
+                    <a href="/course/{{ course.id }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-eye"></i> Просмотр
+                    </a>
+                    <a href="/teacher/course/{{ course.id }}/edit" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-pencil"></i> Изменить
+                    </a>
+                    <a href="/teacher/course/{{ course.id }}/enroll-student" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-person-plus"></i> Записать
+                    </a>
+                    <a href="/teacher/course/{{ course.id }}/delete"
+                       class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Удалить этот курс?');">
+                        <i class="bi bi-trash"></i> Удалить
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<p>Пока нет курсов.</p>
+<div class="alert alert-info">Пока нет курсов.</div>
 {% endif %}
 
 {% endblock %}

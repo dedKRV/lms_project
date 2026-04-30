@@ -2,24 +2,32 @@
 {% block title %}Панель преподавателя{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="mb-4">
     <h1>Панель преподавателя</h1>
-    <p>С возвращением, {{ user_name }}</p>
+    <p class="text-muted">С возвращением, {{ user_name }}</p>
 </div>
 
-<div class="grid-2">
-    <div class="card">
-        <h3>Управление курсами</h3>
-        <p>Создавайте, редактируйте и организуйте свои курсы.</p>
-        <a href="/teacher/courses" class="btn primary-btn">
-            Перейти к курсам
-        </a>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Управление курсами</h5>
+                <p class="card-text text-muted">Создавайте, редактируйте и организуйте свои курсы.</p>
+                <a href="/teacher/courses" class="btn btn-success">
+                    Перейти к курсам
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>Уроки и файлы</h3>
-        <p>Добавляйте уроки с текстом и загружайте файлы.</p>
-        <span class="badge">Внутри курсов</span>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Уроки и файлы</h5>
+                <p class="card-text text-muted">Добавляйте уроки с текстом и загружайте файлы.</p>
+                <span class="badge bg-success">Внутри курсов</span>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -3,26 +3,33 @@
 {% block title %}Редактировать урок{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Редактировать урок</h2>
-    <div style="display: flex; gap: 10px;">
-        <a href="/teacher/lesson/{{ lesson.id }}/block/add/textbook" class="btn primary-btn">+ Учебник</a>
-        <a href="/teacher/lesson/{{ lesson.id }}/block/add/assignment" class="btn primary-btn">+ Задание</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Редактировать урок</h2>
+            <div class="d-flex gap-2">
+                <a href="/teacher/lesson/{{ lesson.id }}/block/add/textbook" class="btn btn-success btn-sm">+ Учебник</a>
+                <a href="/teacher/lesson/{{ lesson.id }}/block/add/assignment" class="btn btn-success btn-sm">+ Задание</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Название урока</label>
+                        <input type="text" name="title" value="{{ lesson.title }}" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Содержание урока</label>
+                        <textarea name="content" rows="6" class="form-control" required>{{ lesson.content }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Обновить урок</button>
+                </form>
+            </div>
+        </div>
+        <br>
+        <a href="/lesson/{{ lesson.id }}"><i class="bi bi-arrow-left"></i> Просмотр урока</a><br>
+        <a href="/course/{{ lesson.course_id }}"><i class="bi bi-arrow-left"></i> Назад к курсу</a>
     </div>
 </div>
-
-<form class="form" method="POST">
-    <label>Название урока</label>
-    <input type="text" name="title" value="{{ lesson.title }}" required>
-
-    <label>Содержание урока</label>
-    <textarea name="content" rows="6" required>{{ lesson.content }}</textarea>
-
-    <button type="submit">Обновить урок</button>
-</form>
-
-<br>
-<a href="/lesson/{{ lesson.id }}">← Просмотр урока</a>
-<br>
-<a href="/course/{{ lesson.course_id }}">← Назад к курсу</a>
 {% endblock %}

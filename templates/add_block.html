@@ -3,21 +3,35 @@
 {% block title %}Добавить блок{% endblock %}
 
 {% block content %}
-<h2>{% if block_type == 'textbook' %}Добавить учебный материал{% else %}Добавить задание{% endif %}</h2>
-
-<form class="form" method="POST" enctype="multipart/form-data">
-    <label>Название блока</label>
-    <input type="text" name="title" required>
-
-    <label>Содержание</label>
-    <textarea name="content" rows="10" required></textarea>
-
-    <label>Загрузить изображения</label>
-    <input type="file" name="images" multiple accept="image/*">
-
-    <button type="submit">Добавить</button>
-</form>
-
-<br>
-<a href="/lesson/{{ lesson.id }}">← Назад к уроку</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-3">{% if block_type == 'textbook' %}Добавить учебный материал{% else %}Добавить задание{% endif %}</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Название блока</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Содержание</label>
+                        <textarea name="content" rows="10" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Загрузить изображения</label>
+                        <input type="file" name="images" multiple accept="image/*" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Прикрепить файлы (PDF, DOC, XLSX и др.)</label>
+                        <input type="file" name="files" multiple class="form-control">
+                        <small class="text-muted">Можно загрузить несколько файлов</small>
+                    </div>
+                    <button type="submit" class="btn btn-success">Добавить</button>
+                </form>
+            </div>
+        </div>
+        <br>
+        <a href="/lesson/{{ lesson.id }}"><i class="bi bi-arrow-left"></i> Назад к уроку</a>
+    </div>
+</div>
 {% endblock %}

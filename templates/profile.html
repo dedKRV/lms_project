@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль {{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Профиль пользователя</h2>
+            {% if is_own_profile %}
+            <a href="/profile/edit" class="btn btn-success">
+                <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Личная информация</h5>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Имя</label>
+                    <p class="form-control-plaintext">{{ user.name or 'Не указано' }}</p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <p class="form-control-plaintext">{{ user.email }}</p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Дата рождения</label>
+                    <p class="form-control-plaintext">
+                        {% if user.birth_date %}
+                            {{ user.birth_date.strftime('%d.%m.%Y') }}
+                            {% if age is not none %}
+                                <span class="text-muted">({{ age }} {{ 'год' if age % 10 == 1 and age % 100 != 11 else 'года' if age % 10 in [2,3,4] and age % 100 not in [12,13,14] else 'лет' }})</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">Не указана</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Роль</label>
+                    <p class="form-control-plaintext">
+                        <span class="badge bg-{{ 'success' if user.role == 'teacher' else 'primary' }}">
+                            {{ 'Преподаватель' if user.role == 'teacher' else 'Студент' }}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Дата регистрации</label>
+                    <p class="form-control-plaintext">
+                        {{ user.created_date.strftime('%d.%m.%Y в %H:%M') if user.created_date else 'Не указана' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% if user.role == 'student' %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Успеваемость</h5>
+                <div class="alert alert-info mt-3">
+                    <h4>Общий балл: <strong>{{ display_score }}</strong></h4>
+                    <small>Всего набрано: {{ total_score }} очков</small>
+                </div>
+            </div>
+        </div>
+
+        {% if course_scores %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Баллы по курсам</h5>
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Курс</th>
+                                <th>Баллы</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cs in course_scores %}
+                            <tr>
+                                <td>{{ cs.title }}</td>
+                                <td><strong>{{ cs.display_score }}</strong> ({{ cs.score }} очков)</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Баллы по курсам</h5>
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-info-circle"></i> У пользователя пока нет оценок по курсам.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% if user.role == 'teacher' %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Информация преподавателя</h5>
+                <div class="alert alert-success mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    Пользователь является преподавателем.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

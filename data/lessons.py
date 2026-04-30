@@ -11,6 +11,6 @@ class Lesson(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     course_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("courses.id"), nullable=False)
 
-    course = orm.relationship("Course", backref="course_lessons")
-    files = orm.relationship("LessonFile", cascade="all, delete-orphan")
-    blocks = orm.relationship("LessonBlock", cascade="all, delete-orphan")
+    course = orm.relationship("Course", back_populates="lessons")
+    files = orm.relationship("LessonFile", back_populates="lesson", cascade="all, delete-orphan")
+    blocks = orm.relationship("LessonBlock", back_populates="lesson", cascade="all, delete-orphan")

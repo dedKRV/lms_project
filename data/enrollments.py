@@ -10,5 +10,5 @@ class Enrollment(SqlAlchemyBase):
     student_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=False)
     course_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("courses.id"), nullable=False)
 
-    student = orm.relationship("User", backref="enrollments")
-    course = orm.relationship("Course", backref="enrollments_ref")
+    student = orm.relationship("User", back_populates="enrollments")
+    course = orm.relationship("Course", back_populates="enrollments")

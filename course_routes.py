@@ -7,6 +7,7 @@ from data.courses import Course
 from data.enrollments import Enrollment
 from data.lessons import Lesson
 from data.lesson_files import LessonFile
+from data.users import User
 from decorators import teacher_required
 
 
@@ -50,7 +51,7 @@ def init_course_routes(app):
     @teacher_required
     def edit_course(course_id):
         db_sess = db_session.create_session()
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
 
         if not course:
             abort(404)
@@ -72,7 +73,7 @@ def init_course_routes(app):
     @teacher_required
     def delete_course(course_id):
         db_sess = db_session.create_session()
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
 
         if not course:
             abort(404)
@@ -93,11 +94,65 @@ def init_course_routes(app):
             return redirect(url_for("dashboard"))
 
         db_sess = db_session.create_session()
-        courses = db_sess.query(Course).all()
         enrollments = db_sess.query(Enrollment).filter_by(student_id=current_user.id).all()
+        courses = [e.course for e in enrollments]
         enrolled_ids = [e.course_id for e in enrollments]
 
         return render_template("all_courses.html", courses=courses, enrolled_course_ids=enrolled_ids)
+
+    @app.route("/teacher/course/<int:course_id>/enroll-student", methods=["GET", "POST"])
+    @teacher_required
+    def enroll_student(course_id):
+        db_sess = db_session.create_session()
+        course = db_sess.get(Course, course_id)
+
+        if not course:
+            abort(404)
+
+        if course.teacher_id != current_user.id:
+            flash("Доступ запрещен")
+            return redirect(url_for("teacher_courses"))
+
+        student_info = None
+        error = None
+
+        if request.method == "POST":
+            email = request.form.get("email", "").strip()
+
+            if not email:
+                error = "Введите email"
+            else:
+                student = db_sess.query(User).filter(User.email == email).first()
+
+                if not student:
+                    error = "Пользователь с таким email не найден"
+                elif student.role == "teacher":
+                    error = "Нельзя записать преподавателя на курс"
+                elif db_sess.query(Enrollment).filter_by(student_id=student.id, course_id=course_id).first():
+                    error = "Этот студент уже записан на курс"
+                else:
+                    if request.form.get("confirm") == "yes":
+                        db_sess.add(Enrollment(student_id=student.id, course_id=course_id))
+                        db_sess.commit()
+
+                        from notification_routes import create_notification
+                        create_notification(
+                            student.id,
+                            f"Преподаватель {current_user.name} записал вас на курс '{course.title}'",
+                            f"/course/{course.id}"
+                        )
+
+                        flash(f"Студент {student.name} ({student.email}) записан на курс")
+                        return redirect(url_for("teacher_courses"))
+                    else:
+                        student_info = {
+                            "name": student.name,
+                            "email": student.email,
+                            "id": student.id
+                        }
+
+        db_sess.close()
+        return render_template("enroll_student.html", course=course, student_info=student_info, error=error)
 
     @app.route("/enroll/<int:course_id>")
     @login_required
@@ -107,7 +162,7 @@ def init_course_routes(app):
 
         db_sess = db_session.create_session()
 
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
         if not course:
             abort(404)
 
@@ -143,7 +198,7 @@ def init_course_routes(app):
     @login_required
     def course_detail(course_id):
         db_sess = db_session.create_session()
-        course = db_sess.query(Course).get(course_id)
+        course = db_sess.get(Course, course_id)
 
         if not course:
             abort(404)

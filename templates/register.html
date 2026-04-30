@@ -3,35 +3,49 @@
 {% block title %}Регистрация | LMS{% endblock %}
 
 {% block content %}
-<h2>Регистрация</h2>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h2 class="text-center mb-4">Регистрация</h2>
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="flash">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-<form class="form" method="POST">
-    {{ form.hidden_tag() }}
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Имя</label>
+                        {{ form.name(class="form-control", placeholder="Введите полное имя") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email(class="form-control", placeholder="Введите email") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        {{ form.password(class="form-control", placeholder="Придумайте пароль") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Роль</label>
+                        {{ form.role(class="form-select") }}
+                    </div>
+                    {{ form.submit(class="btn btn-success w-100") }}
+                </form>
+            </div>
+        </div>
 
-    <label>Имя</label>
-    {{ form.name(placeholder="Введите полное имя") }}
-
-    <label>Email</label>
-    {{ form.email(placeholder="Введите email") }}
-
-    <label>Пароль</label>
-    {{ form.password(placeholder="Придумайте пароль") }}
-
-    <label>Роль</label>
-    {{ form.role() }}
-
-    {{ form.submit(class="btn primary-btn") }}
-</form>
-
-<p style="margin-top: 20px;">
-    Уже есть аккаунт? <a href="/login">Войдите</a>
-</p>
+        <p class="text-center mt-3">
+            Уже есть аккаунт? <a href="/login">Войдите</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

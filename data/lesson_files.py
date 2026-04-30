@@ -10,4 +10,4 @@ class LessonFile(SqlAlchemyBase):
     filename = sqlalchemy.Column(sqlalchemy.String(200), nullable=False)
     lesson_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("lessons.id"), nullable=False)
 
-    lesson = orm.relationship("Lesson", backref="lesson_files_ref")
+    lesson = orm.relationship("Lesson", back_populates="files")

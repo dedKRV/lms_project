@@ -3,30 +3,34 @@
 {% block title %}Уведомления{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Уведомления</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Уведомления</h2>
     {% if notifications %}
-    <a href="/notifications/delete-all" class="btn danger-btn" onclick="return confirm('Удалить все уведомления?')">Удалить все</a>
+    <a href="/notifications/delete-all" class="btn btn-outline-danger" onclick="return confirm('Удалить все уведомления?')">
+        Удалить все
+    </a>
     {% endif %}
 </div>
 
 {% if notifications %}
     {% for notif in notifications %}
-    <div class="card" style="margin-bottom: 15px; {% if not notif.is_read %}border-left: 4px solid #4caf50;{% endif %}">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-            <div style="flex: 1;">
-                <p style="margin: 0; {% if not notif.is_read %}font-weight: bold;{% endif %}">{{ notif.text }}</p>
-                <small style="color: #888;">{{ notif.created_at.strftime('%d.%m.%Y в %H:%M') }}</small>
+    <div class="card mb-3 {% if not notif.is_read %}border-success border-start border-4{% endif %}">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-1 {% if not notif.is_read %}fw-bold{% endif %}">{{ notif.text }}</p>
+                    <small class="text-muted">{{ notif.created_at.strftime('%d.%m.%Y в %H:%M') }}</small>
+                </div>
+                {% if notif.link %}
+                <a href="/notifications/read/{{ notif.id }}" class="btn btn-success btn-sm ms-3">Перейти</a>
+                {% else %}
+                <a href="/notifications/read/{{ notif.id }}" class="btn btn-outline-secondary btn-sm ms-3">Прочитано</a>
+                {% endif %}
             </div>
-            {% if notif.link %}
-            <a href="/notifications/read/{{ notif.id }}" class="btn primary-btn">Перейти</a>
-            {% else %}
-            <a href="/notifications/read/{{ notif.id }}" class="btn secondary-btn">Прочитано</a>
-            {% endif %}
         </div>
     </div>
     {% endfor %}
 {% else %}
-    <p class="empty-text">У вас нет уведомлений</p>
+    <div class="alert alert-info text-center">У вас нет уведомлений</div>
 {% endif %}
 {% endblock %}

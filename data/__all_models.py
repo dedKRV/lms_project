@@ -5,5 +5,6 @@ from . import lessons
 from . import lesson_files
 from . import lesson_blocks
 from . import block_images
+from . import block_files
 from . import submissions
 from . import notifications

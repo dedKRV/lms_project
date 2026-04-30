@@ -3,45 +3,39 @@
 {% block title %}{{ lesson.title }}{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>{{ lesson.title }}</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ lesson.title }}</h2>
     {% if current_user.role == "teacher" %}
-    <div style="display: flex; gap: 10px;">
-        <a href="/teacher/lesson/{{ lesson.id }}/block/add/textbook" class="btn primary-btn">+ Учебный материал</a>
-        <a href="/teacher/lesson/{{ lesson.id }}/block/add/assignment" class="btn primary-btn">+ Задание</a>
+    <div class="d-flex gap-2">
+        <a href="/teacher/lesson/{{ lesson.id }}/block/add/textbook" class="btn btn-success btn-sm">+ Учебный материал</a>
+        <a href="/teacher/lesson/{{ lesson.id }}/block/add/assignment" class="btn btn-success btn-sm">+ Задание</a>
     </div>
     {% endif %}
 </div>
 
 {% for block in blocks %}
-<div class="card" style="margin-bottom: 25px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3>
-            <a href="/block/{{ block.id }}" style="color: #2e7d32; text-decoration: none;">
-                {% if block.block_type == 'textbook' %}
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <h5 class="mb-0">
+                <a href="/block/{{ block.id }}" class="text-decoration-none" style="color: #2e7d32;">
                     {{ block.title }}
-                {% else %}
-                    {{ block.title }}
-                {% endif %}
-            </a>
-        </h3>
-        <span class="badge">{{ 'Учебник' if block.block_type == 'textbook' else 'Задание' }}</span>
-        {% if current_user.role == "teacher" %}
-        <div style="display: flex; gap: 10px;">
-            <a href="/teacher/block/{{ block.id }}/edit" class="btn secondary-btn">Редактировать</a>
-            <a href="/teacher/block/{{ block.id }}/delete" class="btn danger-btn" onclick="return confirm('Удалить блок?')">Удалить</a>
+                </a>
+            </h5>
+            <span class="badge bg-secondary">{{ 'Учебник' if block.block_type == 'textbook' else 'Задание' }}</span>
+            {% if current_user.role == "teacher" %}
+            <div class="d-flex gap-2">
+                <a href="/teacher/block/{{ block.id }}/edit" class="btn btn-outline-secondary btn-sm">Редактировать</a>
+                <a href="/teacher/block/{{ block.id }}/delete" class="btn btn-outline-danger btn-sm" onclick="return confirm('Удалить блок?')">Удалить</a>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+        <p class="text-muted mb-2">{{ block.content[:200]|safe }}{% if block.content|length > 200 %}...{% endif %}</p>
+        <a href="/block/{{ block.id }}" class="text-success fw-bold text-decoration-none">Открыть полностью</a>
     </div>
-
-    <div style="margin: 15px 0; line-height: 1.6;">
-        {{ block.content[:200]|safe }}{% if block.content|length > 200 %}...{% endif %}
-    </div>
-
-    <a href="/block/{{ block.id }}" class="btn-link">Открыть полностью</a>
 </div>
 {% endfor %}
 
 <br>
-<a href="/course/{{ lesson.course_id }}">Назад к курсу</a>
+<a href="/course/{{ lesson.course_id }}"><i class="bi bi-arrow-left"></i> Назад к курсу</a>
 {% endblock %}

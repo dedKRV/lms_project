@@ -2,19 +2,25 @@
 {% block title %}Редактировать курс{% endblock %}
 
 {% block content %}
-<h2>Редактировать курс</h2>
-
-<div class="card" style="max-width:500px;">
-<form method="POST">
-    <label>Название курса</label>
-    <input type="text" name="title" value="{{ course.title }}" required>
-
-    <label>Описание</label>
-    <textarea name="description" rows="5" required>{{ course.description }}</textarea>
-
-    <br><br>
-    <button class="btn btn-primary">Обновить курс</button>
-    <a href="/teacher/courses" class="btn btn-secondary">Отмена</a>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Редактировать курс</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Название курса</label>
+                        <input type="text" name="title" value="{{ course.title }}" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Описание</label>
+                        <textarea name="description" rows="5" class="form-control" required>{{ course.description }}</textarea>
+                    </div>
+                    <button class="btn btn-success">Обновить курс</button>
+                    <a href="/teacher/courses" class="btn btn-outline-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

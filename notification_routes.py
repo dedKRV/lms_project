@@ -31,7 +31,7 @@ def init_notification_routes(app):
     @login_required
     def read_notification(notif_id):
         db_sess = db_session.create_session()
-        notif = db_sess.query(Notification).get(notif_id)
+        notif = db_sess.get(Notification, notif_id)
 
         if not notif or notif.user_id != current_user.id:
             db_sess.close()

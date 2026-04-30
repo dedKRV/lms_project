@@ -3,77 +3,89 @@
 {% block title %}Решение {{ submission.student_name }}{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="mb-4">
     <h2>Решение студента</h2>
 </div>
 
-<div class="card" style="margin-bottom: 25px;">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-        <div>
-            <strong>{{ submission.student_name }}</strong> ({{ submission.student_email }})
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between mb-3">
+            <div>
+                <strong>{{ submission.student_name }}</strong> <span class="text-muted">({{ submission.student_email }})</span>
+            </div>
+            <div>
+                <span class="badge bg-secondary">{{ 'Черновик' if submission.status == 'draft' else 'Отправлено на проверку' }}</span>
+                {% if submission.score is not none %}
+                <span class="badge bg-success ms-2">Оценка: {{ submission.score }}/100</span>
+                {% endif %}
+            </div>
         </div>
-        <div>
-            <span class="badge">{{ 'Черновик' if submission.status == 'draft' else 'Отправлено на проверку' }}</span>
-            {% if submission.score is not none %}
-            <span class="badge enrolled" style="margin-left: 10px;">Оценка: {{ submission.score }}/100</span>
-            {% endif %}
-        </div>
+        <p><strong>Задание:</strong> {{ submission.block_title }}</p>
+        <p><strong>Урок:</strong> {{ submission.lesson_title }}</p>
+        <p class="text-muted"><small>Отправлено: {{ submission.submitted_at.strftime('%d.%m.%Y в %H:%M') }}</small></p>
+        {% if submission.graded_at %}
+        <p class="text-muted"><small>Проверено: {{ submission.graded_at.strftime('%d.%m.%Y в %H:%M') }}</small></p>
+        {% endif %}
     </div>
-
-    <p><strong>Задание:</strong> {{ submission.block_title }}</p>
-    <p><strong>Урок:</strong> {{ submission.lesson_title }}</p>
-    <p><small>Отправлено: {{ submission.submitted_at.strftime('%d.%m.%Y в %H:%M') }}</small></p>
-    {% if submission.graded_at %}
-    <p><small>Проверено: {{ submission.graded_at.strftime('%d.%m.%Y в %H:%M') }}</small></p>
-    {% endif %}
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
-    <div class="card">
-        <h3>Код решения</h3>
-        <div style="position: relative;">
-            <pre class="code-block" style="background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 5px; overflow-x: auto; min-height: 300px;">{{ submission.code }}</pre>
-            <button onclick="copyCode(this)" data-code="{{ submission.code }}" class="btn secondary-btn" style="position: absolute; top: 10px; right: 10px; padding: 8px 15px;">Копировать код</button>
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Код решения</h5>
+                <div class="position-relative">
+                    <pre class="code-block p-3 rounded">{{ submission.code }}</pre>
+                    <button onclick="copyCode(this)" data-code="{{ submission.code }}" class="btn btn-outline-secondary btn-sm position-absolute top-0 end-0 m-2">Копировать код</button>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="card">
-        <h3>Проверка нейросетью</h3>
-        <button onclick="checkWithAI({{ submission.id }})" id="check-btn" class="btn primary-btn" style="margin-bottom: 15px;">Проверить код</button>
-        <div id="ai-response" style="background: #f5f5f5; padding: 20px; border-radius: 5px; min-height: 300px;">
-            <p style="color: #888;">Нажмите "Проверить код" для получения ответа от нейросети</p>
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Проверка нейросетью</h5>
+                <button onclick="checkWithAI({{ submission.id }})" id="check-btn" class="btn btn-success mb-3">Проверить код</button>
+                <div id="ai-response" class="bg-light p-3 rounded">
+                    <p class="text-muted">Нажмите "Проверить код" для получения ответа от нейросети</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 {% if submission.score is not none %}
-<div class="card" style="margin-bottom: 25px; background: #e8f5e9;">
-    <h3>Оценка: {{ submission.score }}/100</h3>
-    {% if submission.feedback %}
-    <div style="margin-top: 15px;">
-        <strong>Комментарий преподавателя:</strong>
-        <p style="margin-top: 10px; line-height: 1.6;">{{ submission.feedback }}</p>
+<div class="card mb-4 border-success">
+    <div class="card-body">
+        <h5>Оценка: {{ submission.score }}/100</h5>
+        {% if submission.feedback %}
+        <div class="mt-3">
+            <strong>Комментарий преподавателя:</strong>
+            <p class="mt-2">{{ submission.feedback }}</p>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 {% if current_user.role == "teacher" %}
-<form method="POST" action="/teacher/submission/{{ submission.id }}/grade" style="margin-bottom: 25px;">
+<form method="POST" action="/teacher/submission/{{ submission.id }}/grade" class="mb-4">
     <div class="card">
-        <h3>{% if submission.score is not none %}Изменить оценку{% else %}Выставить оценку{% endif %}</h3>
-        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
-            <label>Оценка (0-100):</label>
-            <input type="number" name="score" value="{{ submission.score or '' }}" min="0" max="100" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 120px; font-size: 16px;">
+        <div class="card-body">
+            <h5>{% if submission.score is not none %}Изменить оценку{% else %}Выставить оценку{% endif %}</h5>
+            <div class="mb-3 d-flex gap-3 align-items-center">
+                <label class="form-label mb-0">Оценка (0-100):</label>
+                <input type="number" name="score" value="{{ submission.score or '' }}" min="0" max="100" required class="form-control" style="width: 120px;">
+            </div>
+            <textarea name="feedback" rows="3" placeholder="Комментарий студенту" class="form-control mb-3">{{ submission.feedback or '' }}</textarea>
+            <button type="submit" class="btn btn-success">{% if submission.score is not none %}Обновить оценку{% else %}Выставить оценку{% endif %}</button>
         </div>
-        <textarea name="feedback" rows="3" placeholder="Комментарий студенту" style="width: 100%; margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">{{ submission.feedback or '' }}</textarea>
-        <button type="submit" class="btn primary-btn">{% if submission.score is not none %}Обновить оценку{% else %}Выставить оценку{% endif %}</button>
     </div>
 </form>
 {% endif %}
 {% endif %}
 
 <br>
-<a href="/block/{{ submission.block_id }}">Назад к заданию</a>
+<a href="/block/{{ submission.block_id }}"><i class="bi bi-arrow-left"></i> Назад к заданию</a>
 
 <script>
 function copyCode(button) {
@@ -91,8 +103,8 @@ function checkWithAI(submissionId) {
     var responseDiv = document.getElementById('ai-response');
 
     btn.disabled = true;
-    btn.textContent = 'Проверка...';
-    responseDiv.innerHTML = '<p style="color: #888;">Загрузка...</p>';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Проверка...';
+    responseDiv.innerHTML = '<div class="d-flex align-items-center text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Загрузка...</div>';
 
     fetch('/submission/' + submissionId + '/check', {
         method: 'POST',
@@ -103,27 +115,18 @@ function checkWithAI(submissionId) {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            responseDiv.innerHTML = '<p style="color: #f44336;">Ошибка: ' + data.error + '</p>';
+            responseDiv.innerHTML = '<div class="alert alert-danger">Ошибка: ' + data.error + '</div>';
         } else {
-            responseDiv.innerHTML = '<pre style="white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;">' + data.response + '</pre>';
+            responseDiv.innerHTML = '<pre class="bg-light p-3 rounded" style="white-space: pre-wrap; line-height: 1.6;">' + data.response + '</pre>';
         }
         btn.disabled = false;
-        btn.textContent = 'Проверить код';
+        btn.innerHTML = 'Проверить код';
     })
     .catch(error => {
-        responseDiv.innerHTML = '<p style="color: #f44336;">Ошибка соединения</p>';
+        responseDiv.innerHTML = '<div class="alert alert-danger">Ошибка соединения</div>';
         btn.disabled = false;
-        btn.textContent = 'Проверить код';
+        btn.innerHTML = 'Проверить код';
     });
 }
 </script>
-
-<style>
-    .code-block {
-        tab-size: 4;
-        -moz-tab-size: 4;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-</style>
 {% endblock %}

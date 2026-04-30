@@ -3,21 +3,30 @@
 {% block title %}Добавить урок{% endblock %}
 
 {% block content %}
-<h2>Добавить урок</h2>
-
-<form class="form" method="POST" enctype="multipart/form-data">
-    <label>Название урока</label>
-    <input type="text" name="title" required>
-
-    <label>Содержание урока</label>
-    <textarea name="content" rows="6" required></textarea>
-
-    <label>Загрузить файл (PDF / DOC)</label>
-    <input type="file" name="file">
-
-    <button type="submit">Добавить урок</button>
-</form>
-
-<br>
-<a href="/course/{{ course.id }}">← Назад к курсу</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-3">Добавить урок</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Название урока</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Содержание урока</label>
+                        <textarea name="content" rows="6" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Загрузить файл (PDF / DOC)</label>
+                        <input type="file" name="file" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-success">Добавить урок</button>
+                </form>
+            </div>
+        </div>
+        <br>
+        <a href="/course/{{ course.id }}"><i class="bi bi-arrow-left"></i> Назад к курсу</a>
+    </div>
+</div>
 {% endblock %}

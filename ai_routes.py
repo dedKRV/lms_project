@@ -9,7 +9,7 @@ from data.submissions import Submission
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-DEEPSEEK_API_KEY = "АПИШЕЧКА"
+DEEPSEEK_API_KEY = ""
 
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -52,7 +52,7 @@ def init_ai_routes(app):
     @login_required
     def check_submission(submission_id):
         db_sess = db_session.create_session()
-        submission = db_sess.query(Submission).get(submission_id)
+        submission = db_sess.get(Submission, submission_id)
 
         if not submission:
             db_sess.close()
