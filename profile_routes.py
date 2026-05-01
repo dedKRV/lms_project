@@ -4,6 +4,40 @@ from flask_login import login_required, current_user
 
 from data import db_session
 from data.users import User
+from data.submissions import Submission
+from data.enrollments import Enrollment
+
+
+def get_student_course_score(db_sess, student_id, course_id):
+    total_score = 0
+    submissions = db_sess.query(Submission).filter(
+        Submission.student_id == student_id,
+        Submission.score.isnot(None)
+    ).all()
+
+    for submission in submissions:
+        block = submission.block
+        if block and block.lesson and block.lesson.course_id == course_id:
+            total_score += submission.score
+
+    return total_score
+
+
+def get_student_total_score(db_sess, student_id):
+    total_score = 0
+    submissions = db_sess.query(Submission).filter(
+        Submission.student_id == student_id,
+        Submission.score.isnot(None)
+    ).all()
+
+    for submission in submissions:
+        total_score += submission.score
+
+    return total_score
+
+
+def format_score(score):
+    return f"{score // 1000}.{score % 1000:03d}"
 
 
 def init_profile_routes(app):
@@ -27,9 +61,19 @@ def init_profile_routes(app):
         course_scores = []
 
         if user.role == "student":
-            display_score = user.get_display_score()
-            total_score = user.get_total_score()
-            course_scores = user.get_course_scores()
+            total_score = get_student_total_score(db_sess, user.id)
+            display_score = format_score(total_score)
+
+            enrollments = db_sess.query(Enrollment).filter_by(student_id=user.id).all()
+            for enrollment in enrollments:
+                course = enrollment.course
+                score = get_student_course_score(db_sess, user.id, course.id)
+                if score > 0:
+                    course_scores.append({
+                        'title': course.title,
+                        'score': score,
+                        'display_score': format_score(score)
+                    })
 
         db_sess.close()
 

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10">
         <h2 class="mb-3">{% if block_type == 'textbook' %}Добавить учебный материал{% else %}Добавить задание{% endif %}</h2>
         <div class="card">
             <div class="card-body">
@@ -15,7 +15,51 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Содержание</label>
-                        <textarea name="content" rows="10" class="form-control" required></textarea>
+                        <div class="editor-toolbar">
+                            <select id="fontFamily" class="form-select form-select-sm" style="width: auto; display: inline;">
+                                <option value="Arial">Arial</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Tahoma">Tahoma</option>
+                            </select>
+                            <select id="fontSize" class="form-select form-select-sm" style="width: auto; display: inline;">
+                                <option value="1">Очень маленький</option>
+                                <option value="2">Маленький</option>
+                                <option value="3" selected>Нормальный</option>
+                                <option value="4">Большой</option>
+                                <option value="5">Очень большой</option>
+                                <option value="6">Огромный</option>
+                                <option value="7">Гигантский</option>
+                            </select>
+                            <input type="color" id="foreColor" class="form-control form-control-sm form-control-color" value="#000000" title="Цвет текста">
+                            <input type="color" id="hiliteColor" class="form-control form-control-sm form-control-color" value="#ffff00" title="Цвет фона">
+                            <button type="button" onclick="execCmd('bold')" class="btn btn-outline-secondary btn-sm" title="Жирный"><b>B</b></button>
+                            <button type="button" onclick="execCmd('italic')" class="btn btn-outline-secondary btn-sm" title="Курсив"><i>I</i></button>
+                            <button type="button" onclick="execCmd('underline')" class="btn btn-outline-secondary btn-sm" title="Подчеркнутый"><u>U</u></button>
+                            <button type="button" onclick="execCmd('strikeThrough')" class="btn btn-outline-secondary btn-sm" title="Зачеркнутый"><s>S</s></button>
+                            <button type="button" onclick="execCmd('subscript')" class="btn btn-outline-secondary btn-sm" title="Нижний индекс">X₂</button>
+                            <button type="button" onclick="execCmd('superscript')" class="btn btn-outline-secondary btn-sm" title="Верхний индекс">X²</button>
+                            <span class="mx-1">|</span>
+                            <button type="button" onclick="execCmd('justifyLeft')" class="btn btn-outline-secondary btn-sm" title="По левому краю"><i class="bi bi-text-left"></i></button>
+                            <button type="button" onclick="execCmd('justifyCenter')" class="btn btn-outline-secondary btn-sm" title="По центру"><i class="bi bi-text-center"></i></button>
+                            <button type="button" onclick="execCmd('justifyRight')" class="btn btn-outline-secondary btn-sm" title="По правому краю"><i class="bi bi-text-right"></i></button>
+                            <button type="button" onclick="execCmd('justifyFull')" class="btn btn-outline-secondary btn-sm" title="По ширине"><i class="bi bi-justify"></i></button>
+                            <span class="mx-1">|</span>
+                            <button type="button" onclick="execCmd('insertUnorderedList')" class="btn btn-outline-secondary btn-sm" title="Маркированный список"><i class="bi bi-list-ul"></i></button>
+                            <button type="button" onclick="execCmd('insertOrderedList')" class="btn btn-outline-secondary btn-sm" title="Нумерованный список"><i class="bi bi-list-ol"></i></button>
+                            <button type="button" onclick="execCmd('indent')" class="btn btn-outline-secondary btn-sm" title="Увеличить отступ"><i class="bi bi-arrow-right"></i></button>
+                            <button type="button" onclick="execCmd('outdent')" class="btn btn-outline-secondary btn-sm" title="Уменьшить отступ"><i class="bi bi-arrow-left"></i></button>
+                            <span class="mx-1">|</span>
+                            <button type="button" onclick="execCmd('createLink')" class="btn btn-outline-secondary btn-sm" title="Вставить ссылку"><i class="bi bi-link-45deg"></i></button>
+                            <button type="button" onclick="execCmd('unlink')" class="btn btn-outline-secondary btn-sm" title="Удалить ссылку"><i class="bi bi-unlink"></i></button>
+                            <button type="button" onclick="insertImage()" class="btn btn-outline-secondary btn-sm" title="Вставить изображение"><i class="bi bi-image"></i></button>
+                            <button type="button" onclick="execCmd('removeFormat')" class="btn btn-outline-secondary btn-sm" title="Очистить формат"><i class="bi bi-eraser"></i></button>
+                            <button type="button" onclick="execCmd('insertHorizontalRule')" class="btn btn-outline-secondary btn-sm" title="Горизонтальная линия">─</button>
+                        </div>
+                        <div id="editor" contenteditable="true" class="form-control rich-editor" style="min-height: 300px; overflow-y: auto;"></div>
+                        <textarea name="content" id="contentArea" style="display: none;"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Загрузить изображения</label>
@@ -26,7 +70,7 @@
                         <input type="file" name="files" multiple class="form-control">
                         <small class="text-muted">Можно загрузить несколько файлов</small>
                     </div>
-                    <button type="submit" class="btn btn-success">Добавить</button>
+                    <button type="submit" class="btn btn-success" onclick="prepareSubmit()">Добавить</button>
                 </form>
             </div>
         </div>
@@ -34,4 +78,111 @@
         <a href="/lesson/{{ lesson.id }}"><i class="bi bi-arrow-left"></i> Назад к уроку</a>
     </div>
 </div>
+
+<style>
+.editor-toolbar {
+    padding: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+.rich-editor {
+    border-radius: 0 0 4px 4px;
+    padding: 15px;
+    min-height: 300px;
+    outline: none;
+}
+.rich-editor:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+.form-control-color {
+    width: 35px !important;
+    height: 31px;
+    padding: 2px;
+}
+</style>
+
+<script>
+function execCmd(command, value = null) {
+    document.execCommand(command, false, value);
+    document.getElementById('editor').focus();
+}
+
+document.getElementById('fontFamily').addEventListener('change', function() {
+    execCmd('fontName', this.value);
+});
+
+document.getElementById('fontSize').addEventListener('change', function() {
+    execCmd('fontSize', this.value);
+});
+
+document.getElementById('foreColor').addEventListener('change', function() {
+    execCmd('foreColor', this.value);
+});
+
+document.getElementById('hiliteColor').addEventListener('change', function() {
+    execCmd('hiliteColor', this.value);
+});
+
+document.getElementById('editor').addEventListener('click', function() {
+    updateToolbar();
+});
+
+document.getElementById('editor').addEventListener('keyup', function() {
+    updateToolbar();
+});
+
+function updateToolbar() {
+    const fontFamily = document.queryCommandValue('fontName');
+    if (fontFamily) {
+        document.getElementById('fontFamily').value = fontFamily.replace(/['"]/g, '');
+    }
+
+    const fontSize = document.queryCommandValue('fontSize');
+    if (fontSize) {
+        document.getElementById('fontSize').value = fontSize;
+    }
+
+    const foreColor = document.queryCommandValue('foreColor');
+    if (foreColor && foreColor !== 'rgb(0, 0, 0)') {
+        document.getElementById('foreColor').value = rgbToHex(foreColor);
+    }
+}
+
+function rgbToHex(rgb) {
+    if (!rgb || rgb === 'transparent') return '#000000';
+    const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (!match) return '#000000';
+    return '#' + [match[1], match[2], match[3]].map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+}
+
+function insertImage() {
+    const url = prompt('Введите URL изображения:');
+    if (url) {
+        execCmd('insertImage', url);
+    }
+}
+
+function execCmd(command, value = null) {
+    if (command === 'createLink') {
+        const url = prompt('Введите URL ссылки:');
+        if (url) {
+            document.execCommand(command, false, url);
+        }
+    } else {
+        document.execCommand(command, false, value);
+    }
+    document.getElementById('editor').focus();
+}
+
+function prepareSubmit() {
+    document.getElementById('contentArea').value = document.getElementById('editor').innerHTML;
+}
+</script>
 {% endblock %}

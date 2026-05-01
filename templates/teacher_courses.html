@@ -18,6 +18,11 @@
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ course.title }}</h5>
                 <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
+                <div class="mb-3">
+                    <span class="badge bg-info">
+                        <i class="bi bi-people"></i> Студентов: {{ course.students_count }}
+                    </span>
+                </div>
                 <div class="d-flex flex-wrap gap-1 mt-3">
                     <a href="/course/{{ course.id }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-eye"></i> Просмотр
@@ -27,6 +32,9 @@
                     </a>
                     <a href="/teacher/course/{{ course.id }}/enroll-student" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-person-plus"></i> Записать
+                    </a>
+                    <a href="/teacher/course/{{ course.id }}/students" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-people"></i> Студенты
                     </a>
                     <a href="/teacher/course/{{ course.id }}/delete"
                        class="btn btn-outline-danger btn-sm"

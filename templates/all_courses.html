@@ -18,7 +18,10 @@
                     <p class="card-text text-muted flex-grow-1">
                         {{ course.description }}
                     </p>
-                    <span class="badge bg-success">Записан</span>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-success">Записан</span>
+                        <span class="badge bg-primary">Баллы: {{ course.display_score }}</span>
+                    </div>
                 </div>
             </div>
         </div>

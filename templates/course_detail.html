@@ -8,7 +8,11 @@
     <div class="card-body">
         <h5>Описание</h5>
         <p>{{ course.description }}</p>
-        <p><strong>Преподаватель:</strong> {{ course.teacher.name }}</p>
+        <p><strong>Преподаватель:</strong>
+            <a href="/profile/{{ course.teacher.id }}" class="text-success text-decoration-none">
+                {{ course.teacher.name }}
+            </a>
+        </p>
     </div>
 </div>
 
