@@ -7,8 +7,6 @@ os.makedirs("db", exist_ok=True)
 db_session.global_init("db/lms.db")
 session = db_session.create_session()
 
-print("Создаем тестового пользователя...")
-
 existing = session.query(User).filter(User.email == "teacher@test.com").first()
 if existing:
     print("Пользователь с таким email уже существует!")

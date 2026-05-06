@@ -96,11 +96,6 @@ def init_lesson_routes(app):
             flash("Вы не можете удалить этот урок")
             return redirect(url_for("dashboard"))
 
-        for file in lesson.files:
-            file_path = os.path.join(current_app.config["UPLOAD_FOLDER"], file.filename)
-            if os.path.exists(file_path):
-                os.remove(file_path)
-
         db_sess.delete(lesson)
         db_sess.commit()
         db_sess.close()

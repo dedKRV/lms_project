@@ -10,7 +10,7 @@ from data.submissions import Submission
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-GIGACHAT_AUTH_KEY = "API"
+GIGACHAT_AUTH_KEY = "MDE5ZGYzYTgtYjJiZS03NGRlLWJiNDQtZWE3NDEwMTkyNzQ5OmFlODRjZTUwLTVkYzUtNDAyYS04NjQ4LThkMTg3YWRlNWNjZA=="
 
 TOKEN_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 API_URL = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
